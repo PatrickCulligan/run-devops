@@ -16,13 +16,15 @@ spec:
     spec:
       containers:
         - name: shoppingclient
-          image: shoppingacr.azurecr.io/shoppingclient:v2
+          image: shoppingacr.azurecr.io/shoppingclient:v1
           imagePullPolicy: IfNotPresent          
           ports:
             - containerPort: 80
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
+            - name: ASPNETCORE_URLS                    # ✅ ADD THIS LINE
+              value: "http://0.0.0.0:80"
             - name: ShoppingAPIUrl
               valueFrom:
                   configMapKeyRef:
@@ -37,6 +39,7 @@ spec:
               cpu: "0.3"
       imagePullSecrets:
         - name: acr-secret
+
 ---
 apiVersion: v1
 kind: Service
@@ -48,4 +51,6 @@ spec:
     app: shoppingclient
   ports:
     - protocol: TCP
-      port: 80           
+      port: 80   
+      targetPort: 80        
+
